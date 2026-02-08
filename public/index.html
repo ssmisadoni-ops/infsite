@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfSite - Advanced Website Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-dim: #0088ff;
+            --secondary: #ff00ff;
+            --accent: #00ff88;
+            --bg-dark: #0a0e1a;
+            --bg-darker: #050810;
+            --bg-card: #151b2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0b0d0;
+            --text-dim: #6b7a99;
+            --border: rgba(0, 240, 255, 0.15);
+            --glow: rgba(0, 240, 255, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-5%, 5%) rotate(1deg); }
+            66% { transform: translate(5%, -5%) rotate(-1deg); }
+        }
+
+        /* Grid overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 60px 0 40px;
+            text-align: center;
+            position: relative;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Info Cards */
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.2);
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Analysis Section */
+        .analysis-section {
+            margin: 60px 0;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary));
+        }
+
+        .section-title::before {
+            right: calc(100% + 20px);
+        }
+
+        .section-title::after {
+            left: calc(100% + 20px);
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        .input-container {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 15px;
+        }
+
+        #urlInput {
+            flex: 1;
+            padding: 18px 25px;
+            background: var(--bg-darker);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        #urlInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--glow);
+            background: var(--bg-card);
+        }
+
+        #urlInput::placeholder {
+            color: var(--text-dim);
+        }
+
+        .analyze-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-weight: 600;
+            font-size: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+
+        .analyze-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .analyze-btn:hover::before {
+            left: 100%;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .loader::before,
+        .loader::after {
+            content: '';
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+        }
+
+        .loader::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top-color: var(--primary);
+            border-right-color: var(--primary);
+            animation: spin 1.5s linear infinite;
+        }
+
+        .loader::after {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-top-color: var(--secondary);
+            border-left-color: var(--secondary);
+            animation: spin 1s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Results */
+        .results {
+            display: none;
+            max-width: 900px;
+            margin: 40px auto;
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-icon {
+            font-size: 1.8rem;
+        }
+
+        .result-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--primary);
+            flex: 1;
+        }
+
+        .result-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .result-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .result-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+
+        .result-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .result-list li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 1.3rem;
+        }
+
+        .metadata {
+            background: var(--bg-darker);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .metadata-item {
+            margin: 8px 0;
+        }
+
+        .metadata-label {
+            color: var(--accent);
+            font-weight: 600;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        /* Error Message */
+        .error {
+            display: none;
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 25px;
+            background: rgba(255, 0, 100, 0.1);
+            border: 1px solid rgba(255, 0, 100, 0.3);
+            border-radius: 12px;
+            color: #ff6b9d;
+            text-align: center;
+            animation: shake 0.5s ease;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 20px 30px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 100px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .section-title::before,
+            .section-title::after {
+                display: none;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+            }
+
+            .analyze-btn {
+                width: 100%;
+            }
+
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            header {
+                padding: 40px 0 30px;
+            }
+
+            .card-icon {
+                font-size: 2rem;
+            }
+
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1 class="logo">INFSITE</h1>
+            <p class="tagline">Advanced Website Intelligence & Analysis</p>
+        </header>
+
+        <!-- Info Cards -->
+        <section class="info-section">
+            <div class="info-card">
+                <div class="card-icon">🔍</div>
+                <h3 class="card-title">Deep Analysis</h3>
+                <p class="card-description">Our AI-powered engine extracts and analyzes real website content to provide comprehensive insights about any public site.</p>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">⚡</div>
+                <h3 class="card-title">Instant Results</h3>
+                <p class="card-description">Get detailed information about website purpose, features, and content in seconds with our advanced parsing technology.</p>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">Secure & Safe</h3>
+                <p class="card-description">We only access publicly available content with proper security measures and input validation for your protection.</p>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section class="analysis-section">
+            <h2 class="section-title">Analyze Any Website</h2>
+            
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="urlInput" 
+                        placeholder="Enter site here"
+                        aria-label="Website URL input"
+                    >
+                    <button class="analyze-btn" id="analyzeBtn">ANALYZE</button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="loader"></div>
+                <p class="loading-text">Analyzing website content...</p>
+            </div>
+
+            <!-- Error -->
+            <div class="error" id="error">
+                <div class="error-icon">⚠️</div>
+                <p id="errorMessage"></p>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results"></div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 InfSite. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const errorMessage = document.getElementById('errorMessage');
+        const results = document.getElementById('results');
+
+        // API endpoint - adjust this to your server URL
+        const API_URL = 'http://localhost:3000/api/analyze';
+
+        // Validate URL
+        function isValidUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                // Try adding https://
+                try {
+                    const url = new URL('https://' + string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+        }
+
+        // Show error
+        function showError(message) {
+            error.classList.add('active');
+            errorMessage.textContent = message;
+            setTimeout(() => {
+                error.classList.remove('active');
+            }, 5000);
+        }
+
+        // Display results
+        function displayResults(data) {
+            results.innerHTML = '';
+
+            // Main summary card
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'result-card';
+            summaryCard.innerHTML = `
+                <div class="result-header">
+                    <span class="result-icon">📊</span>
+                    <h3 class="result-title">Website Overview</h3>
+                </div>
+                <div class="result-content">
+                    <p><strong>About:</strong> ${data.about || 'No description available.'}</p>
+                    ${data.metadata ? `
+                        <div class="metadata">
+                            ${data.metadata.title ? `<div class="metadata-item"><span class="metadata-label">Title:</span> ${data.metadata.title}</div>` : ''}
+                            ${data.metadata.description ? `<div class="metadata-item"><span class="metadata-label">Meta Desc:</span> ${data.metadata.description}</div>` : ''}
+                            ${data.metadata.url ? `<div class="metadata-item"><span class="metadata-label">URL:</span> ${data.metadata.url}</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            results.appendChild(summaryCard);
+
+            // Purpose card
+            if (data.purpose) {
+                const purposeCard = document.createElement('div');
+                purposeCard.className = 'result-card';
+                purposeCard.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-icon">🎯</span>
+                        <h3 class="result-title">Primary Purpose</h3>
+                    </div>
+                    <div class="result-content">
+                        <p>${data.purpose}</p>
+                    </div>
+                `;
+                results.appendChild(purposeCard);
+            }
+
+            // Features card
+            if (data.features && data.features.length > 0) {
+                const featuresCard = document.createElement('div');
+                featuresCard.className = 'result-card';
+                featuresCard.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-icon">✨</span>
+                        <h3 class="result-title">Key Features</h3>
+                    </div>
+                    <div class="result-content">
+                        <ul class="result-list">
+                            ${data.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                results.appendChild(featuresCard);
+            }
+
+            // User actions card
+            if (data.userActions && data.userActions.length > 0) {
+                const actionsCard = document.createElement('div');
+                actionsCard.className = 'result-card';
+                actionsCard.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-icon">👤</span>
+                        <h3 class="result-title">What Users Can Do</h3>
+                    </div>
+                    <div class="result-content">
+                        <ul class="result-list">
+                            ${data.userActions.map(action => `<li>${action}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                results.appendChild(actionsCard);
+            }
+
+            results.classList.add('active');
+        }
+
+        // Analyze website
+        async function analyzeWebsite() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showError('Please enter a website URL');
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                showError('Please enter a valid URL (e.g., example.com or https://example.com)');
+                return;
+            }
+
+            // Hide previous results and errors
+            results.classList.remove('active');
+            error.classList.remove('active');
+
+            // Show loading
+            loading.classList.add('active');
+            analyzeBtn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to analyze website');
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Display results
+                displayResults(data);
+
+            } catch (err) {
+                console.error('Analysis error:', err);
+                showError(err.message || 'Unable to analyze the website. Please check the URL and try again.');
+            } finally {
+                loading.classList.remove('active');
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        // Event listeners
+        analyzeBtn.addEventListener('click', analyzeWebsite);
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                analyzeWebsite();
+            }
+        });
+
+        // Auto-focus input on load
+        urlInput.focus();
+    </script>
+</body>
+</html>
